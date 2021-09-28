@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 namespace RectTestClass
 {
     public partial class Form1 : Form
@@ -18,9 +17,7 @@ namespace RectTestClass
         int NumX = 9;
         int NumY = 10;
         int Num = 90;
-
         SuperRect[] demoArr = new SuperRect[100];
-
         int? gSelectedIndex = null;
         int doubleSelectedIndex = 999; //直接添加到dict里面
         /// <summary>
@@ -29,12 +26,10 @@ namespace RectTestClass
         /// </summary>
         Dictionary<int, bool> RectClickColorCache = new Dictionary<int, bool>();
         //Dictionary<int, bool> RectDoubleColorCache = new Dictionary<int, bool>();
-
         public Form1()
         {
             InitializeComponent();
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             initEvent();
@@ -44,7 +39,6 @@ namespace RectTestClass
         {
             this.MouseClick += new MouseEventHandler(OnMouseDown);
             this.MouseDoubleClick += new MouseEventHandler(OnMouseDoubleClick);
-
         }
         /// <summary>
         /// 画出初始状态的rect
@@ -53,13 +47,12 @@ namespace RectTestClass
         /// <param name="e"></param>
         private void DrawInitRect(object sender, PaintEventArgs e)
         {
-
             //SuperRect demo1 = new SuperRect(0, new int[] { 0, 0 }, 0, 10, "", e);
             //List<SuperRect> demolist = new List<SuperRect>();
             //SuperRect demo = null;
             Stopwatch st = new Stopwatch();
-            SolidBrush Singlebrush = new SolidBrush(Color.Blue);
-            st.Start();
+            SolidBrush Clickedbrush = new SolidBrush(Color.Blue);
+            //st.Start();
             //此处 i是行，j是列
             for (int i = 0; i < NumX; i++)
             {
@@ -69,29 +62,26 @@ namespace RectTestClass
                     demoArr[10 * i + j].DrawSuperRect();
                 }
             }
-            st.Stop();
-            foreach (var index in RectClickColorCache.Keys)//这里面有的就是被单击的
-            {
-                demoArr[index].DrawSuperRect(Singlebrush);
-            }
+            //st.Stop();
+            //foreach (var index in RectClickColorCache.Keys)//这里面有的就是被单击的
+            //{
+            //    demoArr[index].DrawSuperRect(Clickedbrush);
+            //}
             #region MyRegion
             //if (gSelectedIndex != null)
             //{
             //    SolidBrush brush = new SolidBrush(Color.Blue);
-
             //    int a = (int)gSelectedIndex;
             //    demoArr[a].DrawSuperRect(brush);
             //}
             //if (doubleSelectedIndex != 999)
             //{
             //    SolidBrush brush = new SolidBrush(Color.White);
-
             //    int a = doubleSelectedIndex;
             //    demoArr[a].DrawSuperRect(brush);
             //} 
             #endregion
         }
-
         /// <summary>
         /// clicked 只会把点选的值传递出来，本身并不会重绘
         /// </summary>
@@ -99,7 +89,7 @@ namespace RectTestClass
         /// <param name="e"></param>
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
-
+            SolidBrush Clickedbrush = new SolidBrush(Color.Blue);
             for (int i = 0; i < Num; i++)
             {
                 if (demoArr[i].Contains(e.X, e.Y))
@@ -113,13 +103,19 @@ namespace RectTestClass
                         richTextBox1.AppendText(i + "single added!" + '\n');
                     }
                     gSelectedIndex = i;
-                    richTextBox1.AppendText((i + "choosed!" + '\n'));
+                    richTextBox1.AppendText(i + "choosed!" + '\n');
+                    var sg2 = this.CreateGraphics();
+                    demoArr[(int)gSelectedIndex].ChangeColor(Color.Red, sg2);
                     break;
                 }
             }
-            this.Invalidate();
-
-
+            //this.Refresh();
+            
+            //foreach (var index in RectClickColorCache.Keys)//这里面有的就是被单击的
+            //{
+            //    demoArr[index].DrawSuperRect(Clickedbrush);
+            //}
+            //this.Invalidate();
         }
         /// <summary>
         /// 双击可以换成其他颜色，或者是删除恢复其原本颜色
@@ -164,19 +160,18 @@ namespace RectTestClass
         /// </summary>
         private void DrawCacheRect(object sender, PaintEventArgs e)
         {
-
         }
         private void button1_Click(object sender, EventArgs e)
         {
             SolidBrush brush = new SolidBrush(Color.Blue);
-
             //demoArr[0].DrawSuperRect(brush);
             Rectangle demorect = new Rectangle(10, 10, 100, 100);
             //demorect.X = demoArr[0].X; demorect.Y = demoArr[0].Y;demorect.Width = demorect.Height = 50;
             Brush ss = new SolidBrush(Color.Blue);
-            //gg.FillRectangle(ss, demorect);
+            gg.FillRectangle(ss, demorect);
+            gg.FillRectangle(new SolidBrush(Color.Red),demorect);
+            //this.Refresh();
         }
-
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
             richTextBox1.SelectionStart = richTextBox1.Text.Length;
